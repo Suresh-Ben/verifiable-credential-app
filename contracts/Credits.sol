@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 error DataMisMatch(uint NoOfTypes, uint NoOfData);
 error NoAccessToData();
 error AccessOnlyToOwner();
 error NewOwnerCanOnlyRequest();
+error AccessCanOnlyBeSharedByOwnerOfTheId();
 
 contract Credits {
 
     enum Status {
+        EStatus_notfound,
         EStatus_pending,
         EStatus_verified,
         EStatus_rejected
@@ -17,7 +21,7 @@ contract Credits {
     mapping (address => string) id;                                                     //mapping (userAdd => userId);
     mapping (string => bool) validId;                                                   //mapping (userId => inDAtaBase)
     mapping (string => mapping (string => string)) credits;                             //mapping (userdId => mapping(data_type, data))
-    mapping (string => mapping (string => mapping(string => bool))) access;             //mapping (userId => recipentId => dataType => acess)
+    mapping (string => mapping (address => mapping(string => bool))) access;             //mapping (userId => recipentId => dataType => acess)
     mapping (string => Status) idStatus;                                                //mapping (userId => verificationStatus)
     string[] userids;
 
@@ -26,6 +30,10 @@ contract Credits {
 
     constructor() {
         owner = msg.sender;
+    }
+
+    function getOwner() external view returns(address) {
+        return owner;
     }
 
     modifier onlyOwner() {
@@ -41,6 +49,10 @@ contract Credits {
         if(msg.sender != newOwner) revert NewOwnerCanOnlyRequest();
         owner = newOwner;
         newOwner = address(0);
+    }
+
+    function getAllUserIds() external view onlyOwner returns(string[] memory) {
+        return userids;
     }
 
     function getUserId() external view returns(string memory) {
@@ -69,35 +81,52 @@ contract Credits {
         idStatus[userId] = Status.EStatus_pending;
     }
 
-    function generateUserId(address user) private view returns(string memory) {
-        bytes32 hash = keccak256( abi.encodePacked(user, block.timestamp, block.difficulty));
-        return string(abi.encodePacked(hash));
+    function generateUserId(address user) private view returns(string memory) {        
+        return Strings.toHexString(uint256(keccak256( abi.encodePacked(user, block.timestamp, block.difficulty))));
     }
 
     function getCredits(string memory userId, string calldata data_type) external view returns(string memory) {
         string memory senderId = id[msg.sender];
-        if( keccak256(abi.encodePacked(senderId)) != keccak256(abi.encodePacked(userId)) || !access[userId][senderId][data_type] || msg.sender != owner) revert NoAccessToData();
+        bool isUser = (keccak256(abi.encodePacked(senderId)) == keccak256(abi.encodePacked(userId)));
 
-        return credits[userId][data_type];
+        if(isUser || access[userId][msg.sender][data_type] || msg.sender == owner)
+            return credits[userId][data_type];
+        else 
+            revert NoAccessToData();
     }
 
-    function updateStatus(string calldata userid, uint verificationStatus) external onlyOwner {
+    function updateStatus(string calldata userid, bool verificationStatus) external onlyOwner {
         /**
          * @dev
-         * 0 - rejected
-         * 1 - verified
-         * 2 or else - pending
+         * false - rejected
+         * true - verified
          */
 
-        if(verificationStatus == 0)
-            idStatus[userid] = Status.EStatus_rejected;
-        if(verificationStatus == 1)
+        if(verificationStatus)
             idStatus[userid] = Status.EStatus_verified;
         else
-            idStatus[userid] = Status.EStatus_pending;
+            idStatus[userid] = Status.EStatus_rejected;
     }
 
-    function getAllUserIds() external view onlyOwner returns(string[] memory) {
-        return userids;
+    /** ACCESS FUNCTIONS */
+
+    function give_consent(string memory user_id, string memory data_type, address recipient) external {
+        string memory senderId = id[msg.sender];
+        bool isUser = (keccak256(abi.encodePacked(senderId)) == keccak256(abi.encodePacked(user_id)));
+        if(!isUser) revert AccessCanOnlyBeSharedByOwnerOfTheId();
+
+        access[user_id][recipient][data_type] = true;
+    }
+
+    function revoke_consent(string memory user_id, string memory data_type, address recipient) external {
+        string memory senderId = id[msg.sender];
+        bool isUser = (keccak256(abi.encodePacked(senderId)) == keccak256(abi.encodePacked(user_id)));
+        if(!isUser) revert AccessCanOnlyBeSharedByOwnerOfTheId();
+
+        access[user_id][recipient][data_type] = false;
+    }
+
+    function check_consent(string memory user_id, string memory data_type, address recipient) external view returns(bool) {
+        return access[user_id][recipient][data_type];
     }
 }
