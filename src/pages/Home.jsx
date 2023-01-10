@@ -15,6 +15,7 @@ function Home() {
 
     const [address, SetAddress] = useState("");
     const [contract, SetContract] = useState(null);
+    const [connectionError, SetConnectionError] = useState("");
 
     async function connectWallet() {
         let provider = await new ethers.providers.Web3Provider(window.ethereum);
@@ -35,19 +36,22 @@ function Home() {
             console.log(contract);
         }
         else
-            console.error("Metamask is not installed...!!!");
+            SetConnectionError("Metamask is not installed...!!!");
     }
 
     return (
         <div className="home">
-            <Nav contract={contract} connect={connectWallet}> </Nav>
+            <Nav connect={connectWallet}> </Nav>
+            <p style={{color : "red"}}>
+                {connectionError}
+            </p>
 
             <Router>
                 <Switch>
                     <Route path="/" element={<Start />} exact/>
-                    <Route path="/owner" element={<Issuer />} exact/>
-                    <Route path="/holder" element={<Holder />} exact/>
-                    <Route path="/verifier" element={<Verifier />} exact/>
+                    <Route path="/owner" element={<Issuer contract={contract} />} exact/>
+                    <Route path="/holder" element={<Holder contract={contract} />} exact/>
+                    <Route path="/verifier" element={<Verifier contract={contract} />} exact/>
                 </Switch>
             </Router>
 

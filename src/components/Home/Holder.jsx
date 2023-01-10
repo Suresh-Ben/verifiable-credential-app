@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 
 import './Holder.css';
+import reload from './files/reload.png';
 import Sidebar from '../Shared/Home/Sidebar';
 
-function Holder() {
+function Holder(props) {
+
+    const [userId, SetUserId] = useState("");
+    const [contract, SetContract] = useState(null);
+    const [updateError, SetUpdateError] = useState("");
 
     const [holderTabState, SetHolderTabState] = useState("data");
     /**
@@ -12,6 +17,34 @@ function Holder() {
      * - data - shows data to user and user and update data
      * - auth - user can handle data access to verifier
      */
+
+    async function updateId() {
+        if(!props.contract) return;
+        SetContract(props.contract);
+        
+        if(contract)
+        {
+            const tempUserId = await contract.getUserId();
+            SetUserId(tempUserId);
+        }
+    }
+
+    async function updateCredits(data_type, data)
+    {
+        SetUpdateError("updating data...!!!");
+
+        if(!contract)
+            SetContract(props.contract);
+        
+        if(contract){
+            const recipet = await contract.updateCredits(data_type, data);
+            await recipet.wait(1);
+            SetUpdateError("updated data successfully...!!!");
+        }
+        else
+            SetUpdateError("please connect wallet...!!!")
+    }
+      
 
     function handleState(state) {
         if(state === "auth")
@@ -38,17 +71,19 @@ function Holder() {
             <Sidebar tabs={holderTabs} handle={handleState}> </Sidebar>
 
             <div className="holder-id">
-                {"0xUVyjtukgehflseiulisghlu"}
+                {"user id : " + userId}
+                <img onClick={updateId} className="reload-id" src={reload} alt="reload" />
             </div>
 
             {holderTabState === "data" ?
-                <DataTab> </DataTab> : <AuthTab> </AuthTab>
+                <DataTab userId={userId} contract={contract} updateError={updateError} updateCredits={updateCredits}> </DataTab> 
+                : <AuthTab userId={userId} contract={contract} > </AuthTab>
             }
         </div>
     );
 }
 
-function DataTab() {
+function DataTab(props) {
 
     const creds = [
         "name",
@@ -61,9 +96,29 @@ function DataTab() {
     ];
 
     const [canUpdate, SetCanUpdate] = useState(false);
+    const [updatedTypes, SetUpdatedTypes] = useState([]);
+    const [updatedData, SetUpdatedData] = useState([]);
+    const [updatedDataObj, SetUpdatedDataObj] = useState({});
 
     function handleButton() {
         SetCanUpdate(true);
+    }
+
+    function updateCredits() {
+        for (let key in updatedDataObj) {
+            let tempTypes = updatedTypes;
+            tempTypes.push(key);
+            SetUpdatedTypes(tempTypes);
+
+            let tempData = updatedData;
+            tempData.push(updatedDataObj[key]);
+            SetUpdatedData(tempData);
+        }
+        
+        console.log("data types : " + updatedTypes);
+        console.log("data : " + updatedData);
+
+        props.updateCredits(updatedTypes, updatedData);
     }
 
     return (
@@ -74,19 +129,26 @@ function DataTab() {
                     id = {cred}
                     type = {cred}
                     setUpdate={handleButton}
+
+                    updatedDataObj={updatedDataObj}
+                    SetUpdatedDataObj={SetUpdatedDataObj}
+
+                    contract={props.contract}
+                    userId={props.userId}
                 > </InputArea>
             })}
 
             <div className="holder-button">
-                <button disabled={!canUpdate} className="update-data">
+                <button onClick={updateCredits} disabled={!canUpdate} className="update-data">
                     Update Data
                 </button>
             </div>
+            {props.updateError}
         </div>
     );
 }
 
-function AuthTab() {
+function AuthTab(props) {
 
     const creds = [
         "name",
@@ -98,13 +160,41 @@ function AuthTab() {
         "address"
     ];
     const [buttonText, SetButtonText] = useState("update");
+    const [accessCheck, SetAccessCheck] = useState("");
 
-    function updateAccess(event) {
+    async function updateAccess(event) {
         event.preventDefault();
+        SetAccessCheck("connecting...!!!");
 
-        console.log("access : " + event.target.accesstype.value);
-        console.log("type : " + event.target.selectedtype.value);
-        console.log("recipentid : " + event.target.recipentid.value);
+        const recipentid = event.target.recipentid.value;
+        const selectedtype = event.target.selectedtype.value;
+        const accessType = event.target.accesstype.value;
+
+        if(!props.userId || !props.contract) {
+            console.log("update id...");
+            return;
+        }
+
+        if(accessType === "update") {
+            const reciept = await props.contract.give_consent(props.userId, selectedtype, recipentid);
+            await reciept.wait(1);
+        }
+        else if(accessType === "revoke") {
+            const reciept = await props.contract.revoke_consent(props.userId, selectedtype, recipentid);
+            await reciept.wait(1);
+        }
+        else if(accessType === "check"){
+            const checkstatus = await props.contract.check_consent(props.userId, selectedtype, recipentid);
+            
+            if(checkstatus)
+                SetAccessCheck("access given to this recipent");
+            else
+                SetAccessCheck("no access given to this recipent");
+
+            return;
+        }
+
+        SetAccessCheck("access updated");
     }
     function updateAccessState(event) {
         SetButtonText(event.target.value);
@@ -135,7 +225,7 @@ function AuthTab() {
                 <button type="submit" className="update-data update-access">
                     {buttonText}
                 </button>
-                
+                {accessCheck}
             </form>
 
         </div>
@@ -144,15 +234,35 @@ function AuthTab() {
 
 function InputArea(props) {
 
+    const [myData, SetMyData] = useState("");
+
     function activateUpdate(data_type, event) {
-        console.log(data_type + " : " + event.target.value);
+
+        SetMyData(event.target.value);
+        let tempObj = props.updatedDataObj;
+        tempObj[data_type] = event.target.value;
+        props.SetUpdatedDataObj(tempObj);
+
         props.setUpdate();
+    }
+
+    async function updateMyData() {
+
+        if(!props.userId || !props.contract) {
+            console.log("update id...");
+            return;
+        }
+        const tempMyData = await props.contract.getCredits(props.userId, props.type);
+        SetMyData(tempMyData);
+
+        console.log(myData);
     }
 
     return (
         <div id={props.id} className="input-area">
             <input className="data-type" type="text" value={props.type} disabled={true}/>
-            <input className="data" type="text" onChange={(event) => {activateUpdate(props.type, event)}} />
+            <input value={myData} className="data" type="text" onChange={(event) => {activateUpdate(props.type, event)}} />
+            <img onClick={updateMyData} className="reload-id" src={reload} alt="reload" />
         </div>
     );
 }
