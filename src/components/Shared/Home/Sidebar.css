@@ -1,0 +1,20 @@
+.sidebar {
+    position: relative;
+    left:0;
+    margin-top: 5rem;
+    width: 3rem;
+    height: calc(100vh - 5rem);
+
+    display: grid;
+}
+
+.sidebar-link {
+    text-decoration: none;
+}
+
+.sidebar-link img {
+    height: 2rem;
+    border: solid;
+    border-color: white;
+    border-radius: .5rem;
+}

@@ -1,1 +1,0 @@
-# verifiable-credential-app
