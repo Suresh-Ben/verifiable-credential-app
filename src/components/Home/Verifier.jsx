@@ -4,9 +4,11 @@ import './Verifier.css';
 
 function Verifier() {
     return (
-        <h1>
+        <div class ="verifier-body">
+            <h1>
             This is verifier page.
-        </h1>
+            </h1>
+        </div>
     );
 }
 

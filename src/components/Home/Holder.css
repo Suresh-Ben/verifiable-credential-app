@@ -1,0 +1,4 @@
+.holder-body {
+    height: calc(100vh - 5rem);
+    padding-left: 4rem;
+}

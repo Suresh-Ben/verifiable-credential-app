@@ -1,0 +1,4 @@
+.issuer-body {
+    height : calc(100vh - 5rem);
+    padding-left: 3rem;
+}

@@ -1,10 +1,20 @@
 import React from 'react';
 
+import './Sidebar.css';
+
+import data from '../files/data.png'
+import auth from '../files/auth.png'
+
+const sideImgs = [
+    data, 
+    auth
+];
+
 function Sidebar(props) {
     return (
         <div className="sidebar">
-            {props.links.map((obj) => {
-                <Link link={obj.link} img={obj.img} alt={obj.alt}> </Link>
+            {props.tabs.map((obj) => {
+                return <Link handle={props.handle} id={obj.id} status={obj.status} img={obj.img} alt={obj.id}> </Link>
             })}
         </div>
     );
@@ -12,8 +22,8 @@ function Sidebar(props) {
 
 function Link(props) {
     return (
-        <a className="sidebar-link" href={props.link}>
-            <img src={props.img} alt={props.alt} />
+        <a className="sidebar-link" onClick={() => props.handle(props.status)}>
+            <img src={sideImgs[props.img]} alt={props.alt} />
         </a>
     );
 }
