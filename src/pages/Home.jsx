@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ethers } from 'ethers';
+import Credits from '../../artifacts/contracts/Credits.sol/Credits.json'
 import { BrowserRouter as Router, Route, Routes as Switch } from 'react-router-dom';
 
 import Nav from '../components/Shared/Nav';
@@ -10,9 +12,36 @@ import Holder from '../components/Home/Holder';
 import Verifier from '../components/Home/Verifier';
 
 function Home() {
+
+    const [address, SetAddress] = useState("");
+    const [contract, SetContract] = useState(null);
+
+    async function connectWallet() {
+        let provider = await new ethers.providers.Web3Provider(window.ethereum);
+
+        if(provider) {
+            await provider.send("eth_requestAccounts",[]);
+            const signer = await provider.getSigner();
+            const accountAddress = await signer.getAddress();
+            SetAddress(accountAddress);
+
+            const contractAddress = "";
+            const contractAbi = "";
+            let CreditsContract = await new ethers.Contract(
+                contractAddress,
+                Credits.abi,
+                signer
+            );
+            SetContract(CreditsContract);
+            console.log(contract);
+        }
+        else
+            console.error("Metamask is not installed...!!!");
+    }
+
     return (
         <div className="home">
-            <Nav> </Nav>
+            <Nav contract={contract} connect={connectWallet}> </Nav>
 
             <Router>
                 <Switch>

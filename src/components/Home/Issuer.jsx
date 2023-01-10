@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 
 import './Issuer.css';
 
+import notfound from './files/notfound.png';
+import accepted from './files/tick.png';
+import rejected from './files/rejected.png';
+import pending from './files/pending.png';
+
+const statusImg = [
+    notfound,
+    accepted,
+    rejected,
+    pending
+];
+
 function Issuer() {
 
     const [issuerTabState, SetIssuerTabState] = useState("users");
@@ -21,17 +33,14 @@ function Issuer() {
 
     return (
         <div className="issuer-body">
-            {() => {
-                if(issuerTabState === "users")
-                    return <usersTab> </usersTab>
-                else 
-                    return <dataTab> </dataTab>
-            }}
+            {issuerTabState === "users" ?
+                <UsersTab> </UsersTab> : <DataTab> </DataTab>
+            }
         </div>
     );
 }
 
-function usersTab() {
+function UsersTab() {
     return (
         <h1> 
             This is UserTab.
@@ -39,11 +48,20 @@ function usersTab() {
     );
 }
 
-function dataTab() {
+function DataTab() {
     return (
         <h1> 
             This is dataTab.
         </h1>
+    );
+}
+
+function userItem(props) {
+    return (
+        <div className="user-item">
+            <input className="user-id" value={props.id} type="text" disabled={true} />
+            <img src={statusImg[props.status]} alt="status" />
+        </div>
     );
 }
 

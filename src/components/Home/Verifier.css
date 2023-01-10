@@ -1,4 +1,33 @@
 .verifier-body {
-    height: calc(100vh-5rem);
-    padding-left: 3rem;
+    height: calc(100vh - 5rem);
+}
+
+.verifier-form {
+    display: flex;
+    justify-content: center;
+}
+
+.verifier-form input {
+    margin-right: 1rem;
+    width: 20rem;
+}
+
+.verifier-form button {
+    padding: 0 1rem;
+    border-radius: .5rem;
+}
+
+.user-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.userid-status {
+    display: flex;
+    justify-content: center;
+}
+
+.user-details {
+    margin-top: 5rem;
 }

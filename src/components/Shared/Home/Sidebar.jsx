@@ -14,7 +14,7 @@ function Sidebar(props) {
     return (
         <div className="sidebar">
             {props.tabs.map((obj) => {
-                return <Link handle={props.handle} id={obj.id} status={obj.status} img={obj.img} alt={obj.id}> </Link>
+                return <Link handle={props.handle} key={obj.id} id={obj.id} status={obj.status} img={obj.img} alt={obj.id}> </Link>
             })}
         </div>
     );
@@ -22,7 +22,7 @@ function Sidebar(props) {
 
 function Link(props) {
     return (
-        <a className="sidebar-link" onClick={() => props.handle(props.status)}>
+        <a id={props.id} className="sidebar-link" onClick={() => props.handle(props.status)}>
             <img src={sideImgs[props.img]} alt={props.alt} />
         </a>
     );

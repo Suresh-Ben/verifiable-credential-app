@@ -1,4 +1,67 @@
 .holder-body {
     height: calc(100vh - 5rem);
-    padding-left: 4rem;
+}
+
+.input-area {
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-area input {
+    padding: 0 1rem;
+}
+
+.data-type {
+    width: 10rem;
+    margin-right: 1rem;
+}
+
+.data {
+    width: 20rem;
+}
+
+.user-data {
+    margin-top: 5rem;
+}
+
+.holder-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-data {
+    border-radius: .5rem;
+    padding: .5rem 1rem;
+    margin-top: 1rem;
+}
+
+.holder-id {
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.auth-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+#recipentid {
+    width: 20rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+.update-access {
+    margin: 1rem 8rem;
+}
+
+select {
+    margin: .5rem;
 }
