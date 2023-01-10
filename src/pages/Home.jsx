@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
-import Credits from '../../artifacts/contracts/Credits.sol/Credits.json'
+import Credits from './Credits.json';
 import { BrowserRouter as Router, Route, Routes as Switch } from 'react-router-dom';
 
 import Nav from '../components/Shared/Nav';
@@ -25,8 +25,7 @@ function Home() {
             const accountAddress = await signer.getAddress();
             SetAddress(accountAddress);
 
-            const contractAddress = "";
-            const contractAbi = "";
+            const contractAddress = "0x9e03876A0850d8597c16F70c5D69204c1a3882f1";
             let CreditsContract = await new ethers.Contract(
                 contractAddress,
                 Credits.abi,
