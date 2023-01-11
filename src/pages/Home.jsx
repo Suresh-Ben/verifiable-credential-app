@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import Credits from './Credits.json';
-import { BrowserRouter as Router, Route, Routes as Switch } from 'react-router-dom';
 
 import Nav from '../components/Shared/Nav';
 import About from '../components/Shared/About';
@@ -11,7 +10,7 @@ import Issuer from '../components/Home/Issuer';
 import Holder from '../components/Home/Holder';
 import Verifier from '../components/Home/Verifier';
 
-function Home() {
+function Home(props) {
 
     const [address, SetAddress] = useState("");
     const [contract, SetContract] = useState(null);
@@ -46,14 +45,18 @@ function Home() {
                 {connectionError}
             </p>
 
-            <Router>
-                <Switch>
-                    <Route path="/" element={<Start />} exact/>
-                    <Route path="/owner" element={<Issuer contract={contract} />} exact/>
-                    <Route path="/holder" element={<Holder contract={contract} />} exact/>
-                    <Route path="/verifier" element={<Verifier address={address} contract={contract} />} exact/>
-                </Switch>
-            </Router>
+            {props.id === "start" ? 
+                <Start> </Start> : 
+                (props.id === "owner" ?
+                    <Issuer contract={contract} > </Issuer> : 
+                    (props.id === "holder" ? 
+                        <Holder contract={contract} > </Holder> :
+                        (props.id === "verifier" ? 
+                            <Verifier address={address} contract={contract} > </Verifier> :
+                            <h1> 
+                                404 Notfound
+                            </h1>)))
+            }
 
             <About> </About>
         </div>
