@@ -21,15 +21,15 @@ function Nav(props) {
 
     return (
         <div className="nav">
-            <a className="nav-logo" href="./">
+            <a className="nav-logo" onClick={() => props.SetPageRoute("start")}>
                 <img src={logo} alt="logo" />
                 <h2>Credentials</h2>
             </a>
 
             <div className="nav-section">
-                <a className="nav-link" href="./owner">owner</a>
-                <a className="nav-link" href="./holder">holder</a>
-                <a className="nav-link" href="./verifier">verifier</a>
+                <a className="nav-link" onClick={() => props.SetPageRoute("owner")}>owner</a>
+                <a className="nav-link" onClick={() => props.SetPageRoute("holder")}>holder</a>
+                <a className="nav-link" onClick={() => props.SetPageRoute("verifier")}>verifier</a>
 
                 <button onClick={connectWallet} className="nav-connection"> 
                     {connectionStatus} 

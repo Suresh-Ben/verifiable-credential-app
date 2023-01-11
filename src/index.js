@@ -7,16 +7,10 @@ import Start from './pages/Start';
 import Issuer from './pages/Issuer';
 import Holder from './pages/Holder';
 import Verifier from './pages/Verifier';
+import Home from './pages/Home';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <Router>
-        <Switch>
-            <Route path="/" element={<Start />} />
-            <Route path="/owner" element={<Issuer />} />
-            <Route path="/holder" element={<Holder />} />
-            <Route path="/verifier" element={<Verifier />} />
-        </Switch>
-    </Router>
+    <Home> </Home>
 );
 

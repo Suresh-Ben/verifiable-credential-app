@@ -15,6 +15,7 @@ function Home(props) {
     const [address, SetAddress] = useState("");
     const [contract, SetContract] = useState(null);
     const [connectionError, SetConnectionError] = useState("");
+    const [pageRoute, SetPageRoute] = useState("start");
 
     async function connectWallet() {
         let provider = await new ethers.providers.Web3Provider(window.ethereum);
@@ -40,18 +41,18 @@ function Home(props) {
 
     return (
         <div className="home">
-            <Nav connect={connectWallet}> </Nav>
+            <Nav SetPageRoute={SetPageRoute} connect={connectWallet}> </Nav>
             <p style={{color : "red"}}>
                 {connectionError}
             </p>
 
-            {props.id === "start" ? 
-                <Start> </Start> : 
-                (props.id === "owner" ?
+            {pageRoute === "start" ? 
+                <Start SetPageRoute={SetPageRoute}> </Start> : 
+                (pageRoute === "owner" ?
                     <Issuer contract={contract} > </Issuer> : 
-                    (props.id === "holder" ? 
+                    (pageRoute === "holder" ? 
                         <Holder contract={contract} > </Holder> :
-                        (props.id === "verifier" ? 
+                        (pageRoute === "verifier" ? 
                             <Verifier address={address} contract={contract} > </Verifier> :
                             <h1> 
                                 404 Notfound
