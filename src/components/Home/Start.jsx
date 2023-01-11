@@ -8,7 +8,7 @@ function Start(props) {
             <div>
                 <h2>Welcome to verifiable cerdential application</h2><br />
                 <p>
-                    create your credentials, <a onClick={() => props.SetPageRoute("holder")}>get your ID.</a>
+                    create your credentials, <a style={{color : "blue"}} onClick={() => props.SetPageRoute("holder")}>get your ID.</a>
                 </p>
             </div>
         </div>
