@@ -12,10 +12,10 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Router>
         <Switch>
-            <Route path="/" element={<Start />} exact/>
-            <Route path="/owner" element={<Issuer />} exact/>
-            <Route path="/holder" element={<Holder />} exact/>
-            <Route path="/verifier" element={<Verifier />} exact/>
+            <Route path="/" element={<Start />} />
+            <Route path="/owner" element={<Issuer />} />
+            <Route path="/holder" element={<Holder />} />
+            <Route path="/verifier" element={<Verifier />} />
         </Switch>
     </Router>
 );
