@@ -20,6 +20,10 @@ button {
     color: grey;
 }
 
+a {
+    cursor: pointer;
+}
+
 body {
     background-color: black;
 }
