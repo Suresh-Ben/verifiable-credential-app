@@ -2,3 +2,40 @@
     height : calc(100vh - 5rem);
 }
 
+.user-item img {
+    height: 1.5rem;
+    margin-left: .5rem;
+}
+
+.user-id {
+    width: 40rem;
+}
+
+.user-item {
+    margin: .5rem 1rem;
+}
+
+.load-users {
+    margin: .5rem 2rem;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+}
+
+.owner-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.owner-buttons button {
+    margin: .5rem 3.5rem;
+    padding: .5rem 1rem;
+}
+
+.reject-button {
+    background-color: red;
+}
+
+.verify-button {
+    background-color: green;
+}

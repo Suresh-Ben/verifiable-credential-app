@@ -12,6 +12,14 @@ select {
     color : black;
 }
 
+option {
+    color: black;
+}
+
+button {
+    color: grey;
+}
+
 body {
     background-color: black;
 }

@@ -51,7 +51,7 @@ function Home() {
                     <Route path="/" element={<Start />} exact/>
                     <Route path="/owner" element={<Issuer contract={contract} />} exact/>
                     <Route path="/holder" element={<Holder contract={contract} />} exact/>
-                    <Route path="/verifier" element={<Verifier contract={contract} />} exact/>
+                    <Route path="/verifier" element={<Verifier address={address} contract={contract} />} exact/>
                 </Switch>
             </Router>
 
