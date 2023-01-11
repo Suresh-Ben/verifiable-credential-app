@@ -26,4 +26,9 @@ a {
 
 body {
     background-color: black;
+
+    background-image:url("./files/back.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
