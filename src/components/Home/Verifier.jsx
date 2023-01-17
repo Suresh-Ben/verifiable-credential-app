@@ -113,6 +113,8 @@ function InputArea(props) {
         }
 
         const reqDataHash = await props.contract.getCredits(props.userId, props.type);
+        console.log(props.type + " : " + reqDataHash);
+        
         const reqData = await getData(reqDataHash);
         SetreqUserData(reqData.data);
     }

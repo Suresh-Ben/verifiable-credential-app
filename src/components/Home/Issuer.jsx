@@ -127,7 +127,9 @@ function DataTab(props) {
                 </button>
             </div>
             <br />
-            {selectedUserStatus}
+            <div className="mid-content">
+                {selectedUserStatus}
+            </div>
         </div>
     );
 }
@@ -201,6 +203,8 @@ function InputArea(props) {
         }
         
         let tempUserDataHash = await props.contract.getCredits(props.userId, props.type);
+        console.log(props.type + " : " + tempUserDataHash);
+
         let tempUserData = await getData(tempUserDataHash);
         SetUserData(tempUserData.data);
     }

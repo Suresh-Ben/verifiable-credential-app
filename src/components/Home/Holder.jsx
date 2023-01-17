@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import fs from 'fs';
+import env from "react-dotenv"
 
 import './Holder.css';
 import reload from './files/reload.png';
 import Sidebar from '../Shared/Home/Sidebar';
 
 console.log(fs);
-const API_Key = process.env.API_Key;
-const API_Secret = process.env.API_Secret;
+const API_Key = "8d5ce5b1238d166691af";
+const API_Secret = "1b88f5c8f5019ec61293e9ef8e516fc30f90c498ab63849fcba79101c397d3e8";
 
 function Holder(props) {
 
@@ -180,7 +181,10 @@ function DataTab(props) {
                     Update Data
                 </button>
             </div>
-            {props.updateError}
+            <br />
+            <div className="mid-content">
+                {props.updateError}
+            </div>
         </div>
     );
 }
@@ -262,7 +266,11 @@ function AuthTab(props) {
                 <button type="submit" className="update-data update-access">
                     {buttonText}
                 </button>
-                {accessCheck}
+                <br />
+
+                <div className="mid-content">
+                    {accessCheck}
+                </div>
             </form>
 
         </div>
