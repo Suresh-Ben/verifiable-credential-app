@@ -34,11 +34,16 @@ function Issuer(props) {
         SetIssuerTabState("data");
     }
 
+    function backToUsers() {
+        SetSelectedUser(null);
+        SetIssuerTabState("users");
+    }
+
 
     return (
         <div className="issuer-body">
             {issuerTabState === "users" ?
-                <UsersTab SetSelectedUser={openUserDetails} contract={props.contract} > </UsersTab> : <DataTab selectedUser={selectedUser} contract={props.contract}> </DataTab>
+                <UsersTab SetSelectedUser={openUserDetails} contract={props.contract} > </UsersTab> : <DataTab backToUsers={backToUsers} selectedUser={selectedUser} contract={props.contract}> </DataTab>
             }
         </div>
     );
@@ -99,6 +104,9 @@ function DataTab(props) {
 
     return (
         <div className="user-data">
+            <button onClick={props.backToUsers} className="verifier-back">
+                Go back!
+            </button>
             {creds.map((cred) => {
                 return <InputArea 
                     key = {cred}
