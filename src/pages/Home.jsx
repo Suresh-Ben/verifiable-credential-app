@@ -26,7 +26,7 @@ function Home(props) {
             const accountAddress = await signer.getAddress();
             SetAddress(accountAddress);
 
-            const contractAddress = "0x9e03876A0850d8597c16F70c5D69204c1a3882f1";
+            const contractAddress = "0xF5E6e385b60fD05b9970e8358A31c3cd6AF27646";
             let CreditsContract = await new ethers.Contract(
                 contractAddress,
                 Credits.abi,
