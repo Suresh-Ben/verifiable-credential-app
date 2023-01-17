@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import fs from 'fs';
 
 import './Issuer.css';
 
@@ -13,6 +15,8 @@ const statusImg = [
     accepted,
     rejected
 ];
+
+console.log(fs);
 
 function Issuer(props) {
 
@@ -152,14 +156,45 @@ function InputArea(props) {
 
     const [userData, SetUserData] = useState("");
 
+    async function getData(hash) {
+        let theData;
+
+        await axios.get('https://ipfs.io/ipfs/' + hash, {timeout: 1000})
+            .then((response) => {
+                console.log(response.data);
+                theData = response.data;
+            })
+            .catch(async (err) => {
+                
+                await axios.get('https://cloudflare-ipfs.com/ipfs/' + hash, {timeout: 1000})
+                    .then((response) => {
+                        console.log(response.data);
+                        theData = response.data;
+                    })
+                    .catch(async (err) => {
+                        await axios.get('https://ipfs.eth.aragon.network/ipfs/' + hash)
+                            .then((response) => {
+                                console.log(response.data);
+                                theData = response.data;
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    })
+            })
+
+        return theData;
+    }
+
     async function handleUserData() {
         if(!props.contract) {
             console.log("plese connect wallet");
             return;
         }
         
-        let tempUserData = await props.contract.getCredits(props.userId, props.type);
-        SetUserData(tempUserData);
+        let tempUserDataHash = await props.contract.getCredits(props.userId, props.type);
+        let tempUserData = await getData(tempUserDataHash);
+        SetUserData(tempUserData.data);
     }
     
     useEffect(() => {

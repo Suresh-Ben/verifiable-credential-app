@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import fs from 'fs';
 
 import './Verifier.css';
 import reload from './files/reload.png';
+
+console.log(fs);
 
 function Verifier(props) {
 
@@ -70,6 +74,36 @@ function InputArea(props) {
 
     const [reqUserData, SetreqUserData] = useState("");
 
+    async function getData(hash) {
+        let theData;
+
+        await axios.get('https://ipfs.io/ipfs/' + hash, {timeout: 1000})
+            .then((response) => {
+                console.log(response.data);
+                theData = response.data;
+            })
+            .catch(async (err) => {
+                
+                await axios.get('https://cloudflare-ipfs.com/ipfs/' + hash, {timeout: 1000})
+                    .then((response) => {
+                        console.log(response.data);
+                        theData = response.data;
+                    })
+                    .catch(async (err) => {
+                        await axios.get('https://ipfs.eth.aragon.network/ipfs/' + hash)
+                            .then((response) => {
+                                console.log(response.data);
+                                theData = response.data;
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    })
+            })
+
+        return theData;
+    }
+
     async function updateReqUserData() {
         const access = await props.contract.check_consent(props.userId, props.type, props.address);
 
@@ -78,8 +112,9 @@ function InputArea(props) {
             return;
         }
 
-        const reqData = await props.contract.getCredits(props.userId, props.type);
-        SetreqUserData(reqData);
+        const reqDataHash = await props.contract.getCredits(props.userId, props.type);
+        const reqData = await getData(reqDataHash);
+        SetreqUserData(reqData.data);
     }
 
     return (

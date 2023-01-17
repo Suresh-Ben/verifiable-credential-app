@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import fs from 'fs';
 
 import './Holder.css';
 import reload from './files/reload.png';
 import Sidebar from '../Shared/Home/Sidebar';
+
+console.log(fs);
+const API_Key = process.env.API_Key;
+const API_Secret = process.env.API_Secret;
 
 function Holder(props) {
 
@@ -104,14 +110,45 @@ function DataTab(props) {
         SetCanUpdate(true);
     }
 
-    function updateCredits() {
+    async function pushData(rawData) {
+
+        var data = JSON.stringify({
+            "pinataMetadata": {
+              "name": "credit"
+            },
+            "pinataContent": {
+              "data": rawData
+            }
+        });
+
+        let response = await axios({
+            method: 'post',
+            url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'pinata_api_key': API_Key,
+                'pinata_secret_api_key': API_Secret
+            },
+            data : data
+        });
+
+        return response.data.IpfsHash;
+    }
+
+    async function updateCredits() {
         for (let key in updatedDataObj) {
             let tempTypes = updatedTypes;
             tempTypes.push(key);
             SetUpdatedTypes(tempTypes);
 
             let tempData = updatedData;
-            tempData.push(updatedDataObj[key]);
+            // tempData.push(updatedDataObj[key]);
+            await pushData(updatedDataObj[key])
+                .then((hash) => {
+                    console.log(hash);
+                    tempData.push(hash);
+                });
+
             SetUpdatedData(tempData);
         }
         
@@ -246,6 +283,36 @@ function InputArea(props) {
         props.setUpdate();
     }
 
+    async function getData(hash) {
+        let theData;
+
+        await axios.get('https://ipfs.io/ipfs/' + hash, {timeout: 1000})
+            .then((response) => {
+                console.log(response.data);
+                theData = response.data;
+            })
+            .catch(async (err) => {
+                
+                await axios.get('https://cloudflare-ipfs.com/ipfs/' + hash, {timeout: 1000})
+                    .then((response) => {
+                        console.log(response.data);
+                        theData = response.data;
+                    })
+                    .catch(async (err) => {
+                        await axios.get('https://ipfs.eth.aragon.network/ipfs/' + hash)
+                            .then((response) => {
+                                console.log(response.data);
+                                theData = response.data;
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    })
+            })
+
+        return theData;
+    }
+
     async function updateMyData() {
 
         if(!props.userId || !props.contract) {
@@ -253,9 +320,10 @@ function InputArea(props) {
             return;
         }
         const tempMyData = await props.contract.getCredits(props.userId, props.type);
-        SetMyData(tempMyData);
-
-        console.log(myData);
+        console.log(tempMyData);
+        
+        const theData = await getData(tempMyData);
+        SetMyData(theData.data);
     }
 
     return (
